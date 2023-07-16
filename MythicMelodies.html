@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mythic Melodies</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English&display=swap');
+
+        body {
+            background-color: #28262c;
+            color: #f5f0e5;
+            font-family: 'IM Fell English', serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #35323a;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-title {
+            flex-grow: 1;
+            text-align: left;
+            margin-right: 20px;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .volume-slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .volume-slider {
+            width: 200px;
+            height: 6px;
+            background-color: #f5f0e5;
+            border-radius: 3px;
+            appearance: none;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background-color: #719fa0;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 0 3px #28262c;
+            transform: translateY(-5px);
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .volume-slider::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 100%;
+            background-color: #f5f0e5;
+            border-radius: 3px;
+        }
+
+        .sound-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .sound-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+            width: 150px;
+        }
+
+        .sound-button label {
+            background-color: #f5f0e5;
+            color: #28262c;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .sound-button input[type="checkbox"] {
+            display: none;
+        }
+
+        .sound-button input[type="checkbox"]:checked+label {
+            background-color: #719fa0;
+            color: #ffffff;
+        }
+
+        .footer {
+            background-color: #35323a;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #a8a8a8;
+            margin-top: 10px;
+        }
+
+        /* Responsive Styles */
+
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
+            .sound-button {
+                width: 120px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-title">Mythic Melodies</div>
+        <div class="volume-slider-container">
+            <input type="range" class="volume-slider" min="0" max="100" value="50" step="1"
+                oninput="adjustOverallVolume(this)" />
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="sound-buttons">
+            <div class="sound-button">
+                <input type="checkbox" id="elven-forest" />
+                <label for="elven-forest">Elven Forest</label>
+            </div>
+            <div class="sound-button">
+                <input type="checkbox" id="warm-light" />
+                <label for="warm-light">Warm Light</label>
+            </div>
+            <div class="sound-button">
+                <input type="checkbox" id="fae-meadow" />
+                <label for="fae-meadow">Fae Meadow</label>
+            </div>
+            <div class="sound-button">
+                <input type="checkbox" id="twilight-mystery" />
+                <label for="twilight-mystery">Twilight Mystery</label>
+            </div>
+            <div class="sound-button">
+                <input type="checkbox" id="cathedral-chant" />
+                <label for="cathedral-chant">Cathedral Chant</label>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>&copy; 2023 Bradley Benson</p>
+        </footer>
+    </div>
+
+    <script>
+        const audioMap = new Map();
+        let previousVolume = 50;
+
+        function adjustOverallVolume(slider) {
+            const volume = slider.value / 100;
+            audioMap.forEach((audio) => {
+                audio.volume = volume;
+            });
+            previousVolume = slider.value;
+        }
+
+        function toggleAudio(button) {
+            const audio = audioMap.get(button.id);
+
+            if (button.checked) {
+                audio.loop = true;
+                audio.play();
+            } else {
+                audio.loop = false;
+                audio.pause();
+                audio.currentTime = 0;
+            }
+        }
+
+        function adjustVolume(checkbox, volume) {
+            const audio = audioMap.get(checkbox.id);
+            audio.volume = volume / 100;
+        }
+
+        // Create Audio objects for each button
+        const elvenForestAudio = new Audio('elven-forest.mp3');
+        const warmLightAudio = new Audio('warm-light.mp3');
+        const faeMeadowAudio = new Audio('fae-meadow.mp3');
+        const twilightMysteryAudio = new Audio('twilight-mystery.mp3');
+        const cathedralChantAudio = new Audio('cathedral-chant.mp3');
+
+        // Map each button ID to its corresponding audio
+        audioMap.set('elven-forest', elvenForestAudio);
+        audioMap.set('warm-light', warmLightAudio);
+        audioMap.set('fae-meadow', faeMeadowAudio);
+        audioMap.set('twilight-mystery', twilightMysteryAudio);
+        audioMap.set('cathedral-chant', cathedralChantAudio);
+
+        // Add event listeners to the checkboxes
+        const checkboxes = document.querySelectorAll('.sound-button input[type="checkbox"]');
+        checkboxes.forEach((checkbox) => {
+            checkbox.addEventListener('click', () => {
+                toggleAudio(checkbox);
+                const label = checkbox.nextElementSibling;
+                const backgroundColor = checkbox.checked ? '#719fa0' : '#f5f0e5';
+                label.style.backgroundColor = backgroundColor;
+            });
+        });
+
+    </script>
+</body>
+
+</html>
